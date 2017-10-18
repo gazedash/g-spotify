@@ -24,14 +24,14 @@ const colors = [
   "yellow"
 ];
 const features = [
-  "danceability",
-  "energy",
-  "speechiness",
-  "acousticness",
-  "instrumentalness",
-  "liveness",
-  "valence",
-  "hysterical"
+  { key: "danceability", enabled: true },
+  { key: "energy", enabled: true },
+  { key: "speechiness", enabled: true },
+  { key: "acousticness", enabled: true },
+  { key: "instrumentalness", enabled: true },
+  { key: "liveness", enabled: true },
+  { key: "valence", enabled: true },
+  { key: "hysterical", enabled: true }
 ];
 const getDefColor = ind => colors[ind];
 
@@ -42,7 +42,7 @@ const getProps = item => {
   const preview_url = R.path(["preview_url"], item);
   // { details: { ... }, values: { ... }}
   const details = { name, preview_url, artist };
-  const valuesObj = R.pick(features, item);
+  const valuesObj = R.pick(features.map(f => f.key), item);
   const values = convert(valuesObj);
   const track = { details, values };
   return track;
@@ -52,16 +52,15 @@ const transItems = sorted.map(item => getProps(item));
 
 class Circles extends PureComponent<any, any> {
   render() {
-    return this.props.items.map(({ key, value }, ind) => {
+    return this.props.items.map(({ key, value, enabled }, ind) => {
       return (
         <circle
           cx={this.props.x}
           cy={300 - value * 200}
           key={key}
-          r="1.5"
+          r={enabled ? 1.5 : 0}
           stroke={getDefColor(ind)}
-          strokeWidth="3"
-          fill={"red"}
+          strokeWidth={3}
         />
       );
     });
@@ -72,7 +71,7 @@ class BackgroundLine extends PureComponent<any, any> {
   render() {
     return (
       <rect
-        fill={this.props.isActive ? "grey" : "white"}
+        className={"BackgroundLine"}
         y={100}
         x={this.props.x}
         width={13}
@@ -103,32 +102,59 @@ export default class Graph extends Component<any, any> {
   };
 
   state = {
-    id: null
+    id: null,
+    features: {}
   };
 
-  handleMouseOver = id => {
-    this.setState({ id });
+  handleMouseOver = (id: string) => {
+    console.log(id);
+    
+  };
+
+  handleCheck = (feature: string) => {
+    this.setState(prevState => {
+      return {
+        features: {
+          ...prevState.features,
+          [feature]: !prevState.features[feature]
+        }
+      };
+    });
   };
 
   render() {
     return (
       <div className={"List"}>
-        {[...Array(8).keys()].map((_, index) => (
-          <div key={index} style={{ color: colors[index] }}>
-            {features[index]}
+        {features.map((f, index) => (
+          <div
+            className={"Feature"}
+            key={index}
+            style={{ color: colors[index] }}
+            onClick={() => this.handleCheck(f.key)}
+          >
+            <input
+              type={"checkbox"}
+              checked={this.state.features[f.key]}
+            />
+            {features[index].key}{" "}
           </div>
         ))}
         {this.state.id ? <div>{this.state.id}</div> : null}
         <svg width="10000" height="500">
           {this.props.items.map((item, index) => {
             const id = item.details.preview_url + " " + index;
+            const val = item.values.map(item => {
+              item.enabled = this.state.features[item.key];
+              return item;
+            });
+
             return (
               <Line
                 onMouseOver={this.handleMouseOver}
                 key={id}
                 x={index * 13}
                 id={id}
-                items={item.values}
+                items={val}
                 isActive={this.state.id === id}
               />
             );

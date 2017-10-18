@@ -31,3 +31,14 @@
   fill: red;
   stroke-width: 2px;
 }
+
+.BackgroundLine {
+  fill: white;
+}
+.BackgroundLine:hover {
+  fill: grey;
+}
+
+.Feature {
+  cursor: pointer;
+}
