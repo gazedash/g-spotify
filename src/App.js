@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import R from "ramda";
 import List from "./List";
 import Graph from "./Graph";
-import Slider, { SliderOptions } from "./Slider";
+import Player from "./Player";
 import * as api from "./api";
 import auth from "./api/auth";
 import "./App.css";
@@ -79,19 +79,12 @@ class AppInner extends Component<any> {
         />
         <button onClick={this.onClick}>go</button>
         <Graph />
-        <SliderOptions
-          items={[{ name: "danceability", values: [0, 10] }]}
-          onSubmit={async what_ever => {
-            const x = await api.recommendations();
-            console.log(x);
-          }}
-        />
       </div>
     );
   }
 }
 // items={this.props.items}
-class App extends Component<any> {
+class App extends Component<any, any> {
   render() {
     return (
       <div className="App">
