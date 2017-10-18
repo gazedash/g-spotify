@@ -50,7 +50,7 @@ const getProps = item => {
 const sorted = R.sortBy(R.prop("hysterical"))(items);
 const transItems = sorted.map(item => getProps(item));
 
-class VerticalLine extends PureComponent<any, any> {
+class Circles extends PureComponent<any, any> {
   render() {
     return this.props.items.map(({ key, value }, ind) => {
       return (
@@ -72,7 +72,7 @@ class BackgroundLine extends PureComponent<any, any> {
   render() {
     return (
       <rect
-        fill={this.props.isActive ? "grey" : "black"}
+        fill={this.props.isActive ? "grey" : "white"}
         y={100}
         x={this.props.x}
         width={13}
@@ -90,7 +90,7 @@ class Line extends PureComponent<any, any> {
     return (
       <g onMouseOver={this.handleMouseOver}>
         <BackgroundLine x={this.props.x} isActive={this.props.isActive} />
-        <VerticalLine items={this.props.items} x={this.props.x} />
+        <Circles items={this.props.items} x={this.props.x} />
       </g>
     );
   }
