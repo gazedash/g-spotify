@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "flow-bin": "^0.55.0",
+    "howler": "^2.0.5",
     "qs": "^6.5.1",
     "ramda": "^0.24.1",
     "rc-slider": "^8.3.1",
