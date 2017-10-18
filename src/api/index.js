@@ -38,8 +38,6 @@ function fetchJson(method: string, args?: Object): Promise<{}> {
     });
 }
 
-// fetchAlbum("0sNOF9WDwhWunNAHPD3Baj");
-
 export const fetchArtist = async (query: ?string, args?: {}): Object =>
   fetchJson(`search`, { query, type: "artist", ...args });
 
@@ -48,7 +46,6 @@ export const fetchArtistAlbumsList = async (id: ?string, args?: {}): Object =>
   id ? fetchJson(`artists/${id}/albums`, { limit: 50, ...args }) : () => {};
 
 // artist->fetchArtist.id->fetchArtistAlbumsList[]->fetchAlbum @each fetchAudioFeatures
-// 1=>1=>1=>N=N+3
 
 export const fetchAlbum = async (ids?: string, args?: {}): Object =>
   fetchJson(`albums`, { ids, ...args });
@@ -62,7 +59,8 @@ export const checkLogin = async () => {
   return !("error" in user);
 };
 
-export const recommendations = async (args?: {}) => fetchJson('recommendations/available-genre-seeds', args);
+export const recommendations = async (args?: {}) =>
+  fetchJson("recommendations/available-genre-seeds", args);
 
 export const fetchSongsAndFeatures = async (
   artist?: string,
@@ -121,9 +119,6 @@ export const fetchSongsAndFeatures = async (
       );
     });
     const res = await Promise.all(tracksWithFeatures);
-    // console.log(R.sortBy(R.prop("hysterical"))(R.unnest(res)));
-    // console.log(R.sortBy(R.prop("valence"))(R.unnest(res)));
-
     return R.unnest(res);
   }
   return [];
