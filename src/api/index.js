@@ -5,6 +5,17 @@ import { stringify } from "qs";
 const ENDPOINT = "https://api.spotify.com";
 const VERSION = "v1";
 
+export const features = [
+  { key: "danceability", enabled: true },
+  { key: "energy", enabled: true },
+  { key: "speechiness", enabled: true },
+  { key: "acousticness", enabled: true },
+  { key: "instrumentalness", enabled: true },
+  { key: "liveness", enabled: true },
+  { key: "valence", enabled: true },
+  { key: "hysterical", enabled: true }
+];
+
 // SECRET, headers: arrow functions to make sure value is updated
 const SECRET = () => {
   return localStorage.getItem("token") || "";

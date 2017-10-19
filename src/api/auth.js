@@ -2,10 +2,8 @@
 import CLIENT_ID from "./secret";
 import { parse } from "qs";
 
-let REDIRECT_URI = window.location.host;
-if (REDIRECT_URI === "localhost:3000") {
-  REDIRECT_URI = "http://localhost:3000";
-}
+let REDIRECT_URI = window.location.origin;
+
 function getLoginURL() {
   return `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
     REDIRECT_URI
