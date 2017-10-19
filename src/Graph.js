@@ -1,7 +1,7 @@
 // @flow
 import React, { Component, PureComponent } from "react";
 import R from "ramda";
-import { Howl } from "howler";
+import { player } from "./Common";
 import { debounce } from "lodash";
 import ListItem from "./ListItem";
 import { features } from "./api";
@@ -114,31 +114,8 @@ export default class Graph extends Component<any, any> {
     this.setState({ item });
   }, 100);
 
-  handleClick = (preview_url?: string) => {
-    if (this.state.url === preview_url) {
-      console.log('this,', window.howler, this.state.active);
-      if (window.howler) {
-        if (!this.state.active) {
-          window.howler.play();
-        } else {
-          window.howler.stop();
-        }
-      } 
-      this.setState({ url: preview_url, active: !this.state.active });
-    } else {
-      if (preview_url) {
-        console.log('that,', window.howler, this.state.active);
-        if (window.howler) {
-          window.howler.unload();
-        }
-        window.howler = new Howl({
-          src: [preview_url],
-          format: ["mp3"]
-        });
-      }
-      window.howler.play();
-      this.setState({ url: preview_url, active: true });
-    }
+  handleClick = (nextUrl?: string) => {
+    this.setState(player(this.state.url, nextUrl, this.state.active));
   };
 
   handleCheck = (feature: string) => {
