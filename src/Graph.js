@@ -1,8 +1,11 @@
 // @flow
 import React, { Component, PureComponent } from "react";
 import R from "ramda";
+import { Howl } from "howler";
+import { debounce } from "lodash";
 import ListItem from "./ListItem";
-import items from "./items.json";
+import { features } from "./api";
+// import items from "./items.json";
 
 const colors = [
   "aqua",
@@ -23,16 +26,6 @@ const colors = [
   "white",
   "yellow"
 ];
-const features = [
-  { key: "danceability", enabled: true },
-  { key: "energy", enabled: true },
-  { key: "speechiness", enabled: true },
-  { key: "acousticness", enabled: true },
-  { key: "instrumentalness", enabled: true },
-  { key: "liveness", enabled: true },
-  { key: "valence", enabled: true },
-  { key: "hysterical", enabled: true }
-];
 const getDefColor = ind => colors[ind];
 
 const convert = R.compose(R.map(R.zipObj(["key", "value"])), R.toPairs);
@@ -47,14 +40,15 @@ const getProps = item => {
   const track = { details, values };
   return track;
 };
-const sorted = R.sortBy(R.prop("hysterical"))(items);
-const transItems = sorted.map(item => getProps(item));
+// const sorted = R.sortBy(R.prop("hysterical"))(items);
+// this.props.items = this.props.items.map(item => getProps(item));
 
 class Circles extends PureComponent<any, any> {
   render() {
     return this.props.items.map(({ key, value, enabled }, ind) => {
       return (
         <circle
+          pointerEvents={"none"}
           cx={this.props.x}
           cy={300 - value * 200}
           key={key}
@@ -89,7 +83,7 @@ class Line extends PureComponent<any, any> {
     return (
       <g onMouseOver={this.handleMouseOver}>
         <BackgroundLine x={this.props.x} isActive={this.props.isActive} />
-        <Circles items={this.props.items} x={this.props.x} />
+        <Circles items={this.props.items} x={this.props.x + 5} />
       </g>
     );
   }
@@ -97,18 +91,54 @@ class Line extends PureComponent<any, any> {
 
 export default class Graph extends Component<any, any> {
   static defaultProps = {
-    items: transItems
-    // items: []
+    // items: transItems
+    items: []
   };
 
   state = {
     id: null,
-    features: {}
+    item: {
+      details: {},
+      values: {}
+    },
+    url: "",
+    active: false,
+    features: R.fromPairs(
+      features.map(item => {
+        return [item.key, item.enabled];
+      })
+    )
   };
 
-  handleMouseOver = (id: string) => {
-    console.log(id);
-    
+  handleMouseOver = debounce((item: Object) => {
+    this.setState({ item });
+  }, 100);
+
+  handleClick = (preview_url?: string) => {
+    if (this.state.url === preview_url) {
+      console.log('this,', this.howler, this.state.active);
+      if (this.howler) {
+        if (!this.state.active) {
+          this.howler.play();
+        } else {
+          this.howler.stop();
+        }
+      } 
+      this.setState({ url: preview_url, active: !this.state.active });
+    } else {
+      if (preview_url) {
+        console.log('that,', this.howler, this.state.active);
+        if (this.howler) {
+          this.howler.unload();
+        }
+        this.howler = new Howl({
+          src: [preview_url],
+          format: ["mp3"]
+        });
+      }
+      this.howler.play();
+      this.setState({ url: preview_url, active: true });
+    }
   };
 
   handleCheck = (feature: string) => {
@@ -134,23 +164,29 @@ export default class Graph extends Component<any, any> {
           >
             <input
               type={"checkbox"}
+              readOnly
               checked={this.state.features[f.key]}
             />
             {features[index].key}{" "}
           </div>
         ))}
-        {this.state.id ? <div>{this.state.id}</div> : null}
-        <svg width="10000" height="500">
-          {this.props.items.map((item, index) => {
+        <ListItem
+          value={0}
+          artist={this.state.item.details.artist}
+          name={this.state.item.details.name}
+          preview_url={this.state.item.details.preview_url}
+          onClick={this.handleClick}
+        />
+        <svg width={this.props.items.length * 13} height="500">
+          {this.props.items.map(item => getProps(item)).map((item, index) => {
             const id = item.details.preview_url + " " + index;
             const val = item.values.map(item => {
               item.enabled = this.state.features[item.key];
               return item;
             });
-
             return (
               <Line
-                onMouseOver={this.handleMouseOver}
+                onMouseOver={() => this.handleMouseOver(item)}
                 key={id}
                 x={index * 13}
                 id={id}

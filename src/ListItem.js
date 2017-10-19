@@ -1,9 +1,6 @@
 // @flow
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 
-      // <text textAnchor="middle" x="50%" y="50%" fontFamily="Verdana" fontSize="16" fill="blue">
-      //   Valence
-      // </text>
 const Line = props => (
   <svg height="10" width="400">
     <g>
@@ -18,22 +15,23 @@ const Line = props => (
   </svg>
 );
 
-export default class List extends Component<any> {
+export default class List extends PureComponent<any> {
   static defaultProps = {};
 
-  render() {
-    console.log(this.props);
+  onClick = () => {
+    this.props.onClick(this.props.preview_url);
+  };
 
+  render() {
     return (
       <div className={"ListItem"}>
-        <div className={"ListItem-graph"}>
-          <Line value={1 - this.props.valence} />
-          <Line value={this.props.energy} />
-          <Line value={this.props.hysterical} />
-        </div>
-        <h6 className={"ListItem-track"}>
-          {this.props.artistName} - {this.props.name}
-        </h6>
+        <Line value={this.props.value} />
+        {this.props.artist && this.props.name ? (
+          <span>{`${this.props.artist} - ${this.props.name}`}</span>
+        ) : null}
+        {this.props.preview_url ? (
+          <button onClick={this.onClick}>></button>
+        ) : null}
       </div>
     );
   }
