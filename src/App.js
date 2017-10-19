@@ -21,6 +21,11 @@ export class Container extends Component<any, any> {
   async _componentDidMount() {
     const isLoggedIn = await api.checkLogin();
     this.setState({ isLoggedIn });
+    if (!isLoggedIn) {
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
+      }
+    }
   }
 
   onSubmit = async (name: ?string) => {
@@ -58,6 +63,7 @@ export class Container extends Component<any, any> {
         changeSort={this.changeSort}
         onSubmit={this.onSubmit}
         sortBy={this.state.sortBy}
+        isLoggedIn={isLoggedIn}
         items={R.uniqBy(
           item =>
             item.preview_url
