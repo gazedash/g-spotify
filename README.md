@@ -1,4 +1,5 @@
-G-spotify is a web app that allows you to quickly sort and plot band songs by features.
+# G-spotify
+is a web app that allows you to quickly sort and plot band songs by features.
 You can also play a preview if it's available.
 
 ![G-spotify](https://user-images.githubusercontent.com/11088992/31781775-f1bb1bf6-b501-11e7-9ab0-a60fa6f5c562.png)
@@ -14,11 +15,11 @@ Make sure to get an API key from [Spotify Web Api](developer.spotify.com/web-api
 and place it in `scr/api/secret.ts` like so:
 ```echo "export default 'YOUR_TOKEN';" >> src/api/secret.js```
 
-# install dependencies
-yarn install
+### install dependencies
+```yarn install```
 
-# serve at localhost:3000
-yarn start
+### serve at localhost:3000
+```yarn start```
 
-# build for production with minification
-yarn build
+### build for production with minification
+```yarn build```
